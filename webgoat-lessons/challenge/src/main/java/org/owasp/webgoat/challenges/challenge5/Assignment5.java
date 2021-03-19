@@ -55,7 +55,7 @@ public class Assignment5 extends AssignmentEndpoint {
     public AttackResult login(HttpServletRequest request, HttpServletResponse response){
         String usernamelogin = request.getParameter("username_login");
         String passwordlogin = request.getParameter("password_login");
-        String query = "select password from challenge_users where userid = '" + usernamelogin + "' and password = '" + passwordlogin + "'";
+        String query = "select password from challenge_users where userid = '?' and password = '?'";
         if (!StringUtils.hasText(usernamelogin) || !StringUtils.hasText(passwordlogin)) {
             return failed(this).feedback("required4").build();
         }
@@ -66,6 +66,9 @@ public class Assignment5 extends AssignmentEndpoint {
             var connection = dataSource.getConnection();
             PreparedStatement statement =connection.prepareStatement(query) 
             ){
+
+            statement.setString(1,usernamelogin);
+            statement.setString(2,passwordlogin);
 
             ResultSet resultSet = statement.executeQuery();
 

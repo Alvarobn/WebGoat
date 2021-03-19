@@ -28,7 +28,6 @@ import org.owasp.webgoat.assignments.AttackResult;
 import org.owasp.webgoat.challenges.Flag;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +36,6 @@ import javax.sql.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.net.http.HttpRequest;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -53,17 +51,17 @@ public class Assignment5 extends AssignmentEndpoint {
 
     @PostMapping("/challenge/5")
     @ResponseBody
-    public AttackResult login(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String username_login = request.getParameter("username_login");
-        String password_login = request.getParameter("password_login");
-        if (!StringUtils.hasText(username_login) || !StringUtils.hasText(password_login)) {
+    public AttackResult login(HttpServletRequest request, HttpServletResponse response){
+        String usernamelogin = request.getParameter("username_login");
+        String passwordlogin = request.getParameter("password_login");
+        if (!StringUtils.hasText(usernamelogin) || !StringUtils.hasText(passwordlogin)) {
             return failed(this).feedback("required4").build();
         }
-        if (!"Larry".equals(username_login)) {
-            return failed(this).feedback("user.not.larry").feedbackArgs(username_login).build();
+        if (!"Larry".equals(usernamelogin)) {
+            return failed(this).feedback("user.not.larry").feedbackArgs(usernamelogin).build();
         }
         try (var connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("select password from challenge_users where userid = '" + username_login + "' and password = '" + password_login + "'");
+            PreparedStatement statement = connection.prepareStatement("select password from challenge_users where userid = '" + usernamelogin + "' and password = '" + passwordlogin + "'");
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -71,6 +69,8 @@ public class Assignment5 extends AssignmentEndpoint {
             } else {
                 return failed(this).feedback("challenge.close").build();
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 }

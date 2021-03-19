@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
+
+import java.net.http.HttpRequest;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -48,7 +50,9 @@ public class Assignment5 extends AssignmentEndpoint {
 
     @PostMapping("/challenge/5")
     @ResponseBody
-    public AttackResult login(@RequestParam String username_login, @RequestParam String password_login) throws Exception {
+    public AttackResult login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String username_login = request.getParameter("username_login");
+        String password_login = request.getParameter("password_login");
         if (!StringUtils.hasText(username_login) || !StringUtils.hasText(password_login)) {
             return failed(this).feedback("required4").build();
         }

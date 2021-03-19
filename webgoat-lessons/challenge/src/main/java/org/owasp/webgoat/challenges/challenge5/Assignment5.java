@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @RestController
 @Slf4j
@@ -73,8 +74,8 @@ public class Assignment5 extends AssignmentEndpoint {
             } else {
                 return failed(this).feedback("challenge.close").build();
             }
-        }catch(Exception e){
-            throw new RuntimeException();
+        }catch(SQLException e){
+            e.printStackTrace();
         }
     }
 }

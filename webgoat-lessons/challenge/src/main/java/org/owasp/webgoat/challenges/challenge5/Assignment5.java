@@ -52,7 +52,7 @@ public class Assignment5 extends AssignmentEndpoint {
 
     @PostMapping("/challenge/5")
     @ResponseBody
-    public AttackResult login(HttpServletRequest request, HttpServletResponse response){
+    public AttackResult login(HttpServletRequest request, HttpServletResponse response) throws SQLException{
         String usernamelogin = request.getParameter("username_login");
         String passwordlogin = request.getParameter("password_login");
         String query = "select password from challenge_users where userid = '?' and password = '?'";
@@ -77,8 +77,6 @@ public class Assignment5 extends AssignmentEndpoint {
             } else {
                 return failed(this).feedback("challenge.close").build();
             }
-        }catch(SQLException e){
-            return failed(this).feedback("SQLException throwed").build();
         }
     }
 }

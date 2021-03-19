@@ -79,6 +79,7 @@ public class Assignment5 extends AssignmentEndpoint {
             }
         }catch(SQLException e){
             e.printStackTrace();
+            return failed(this).feedback("SQLException throwed").build();
         }
     }
 }

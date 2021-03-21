@@ -28,13 +28,15 @@ import org.owasp.webgoat.assignments.AttackResult;
 import org.owasp.webgoat.challenges.Flag;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @RestController
 @Slf4j
@@ -48,15 +50,24 @@ public class Assignment5 extends AssignmentEndpoint {
 
     @PostMapping("/challenge/5")
     @ResponseBody
-    public AttackResult login(@RequestParam String username_login, @RequestParam String password_login) throws Exception {
-        if (!StringUtils.hasText(username_login) || !StringUtils.hasText(password_login)) {
+    public AttackResult login(HttpServletRequest request, HttpServletResponse response) throws SQLException{
+        String usernamelogin = request.getParameter("username_login");
+        String passwordlogin = request.getParameter("password_login");
+        String query = "select password from challenge_users where userid = '?' and password = '?'";
+        if (!StringUtils.hasText(usernamelogin) || !StringUtils.hasText(passwordlogin)) {
             return failed(this).feedback("required4").build();
         }
-        if (!"Larry".equals(username_login)) {
-            return failed(this).feedback("user.not.larry").feedbackArgs(username_login).build();
+        if (!"Larry".equals(usernamelogin)) {
+            return failed(this).feedback("user.not.larry").feedbackArgs(usernamelogin).build();
         }
-        try (var connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("select password from challenge_users where userid = '" + username_login + "' and password = '" + password_login + "'");
+        try (
+            var connection = dataSource.getConnection();
+            PreparedStatement statement =connection.prepareStatement(query) 
+            ){
+
+            statement.setString(1,usernamelogin);
+            statement.setString(2,passwordlogin);
+
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
